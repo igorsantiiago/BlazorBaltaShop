@@ -29,11 +29,11 @@ else
 			{
 				<tr>
 					<td>@category.Id</td>
-					<td>@category.Title</td>
+					<td><a href="/categories/@category.Id">@category.Title</a></td>
 					<td>
 						<a href="/categories/edit/@category.Id" class="btn btn-outline-dark">Editar</a>
 						&nbsp;&nbsp;
-						<a href="/categories/remove/@category.Id" class="btn btn-danger">Excluir</a>
+						<a href="/categories/delete/@category.Id" class="btn btn-danger">Excluir</a>
 					</td>
 				</tr>
 			}
@@ -47,7 +47,6 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		await Task.Delay(5000);
 		Categories = await Contexts.Categories.AsNoTracking().ToListAsync();
 	}
 }

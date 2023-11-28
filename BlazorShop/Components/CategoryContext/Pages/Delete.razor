@@ -1,0 +1,43 @@
+﻿@page "/categories/delete/{id:int}"
+@inject ApplicationDbContext Context
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+@attribute [Authorize]
+
+@if(Category is null)
+{
+	<p class="fw-bolder">A categoria selecionada não existe.</p>
+}
+else
+{
+	<h3>Você tem certeza que deseja remover os seguintes dados?</h3>
+
+	<EditForm Model="@Category" OnValidSubmit="OnValidSubmitAsync">
+		<div class="mb-3">
+			<label class="form-label">ID</label>
+			<InputNumber @bind-Value="@Category.Id" class="form-control"/>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Categoria</label>
+			<InputText @bind-Value="@Category.Title" class="form-control" />
+		</div>
+
+		<button type="submit" class="btn btn-danger">Excluir</button>
+		<a href="/categories" class="btn btn-outline-primary">Cancelar</a>
+	</EditForm>
+}
+@code {
+	[Parameter]
+	public int Id { get; set; }
+	public Category? Category { get; set; }
+
+	protected override async Task OnInitializedAsync()
+		=> Category = await Context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
+
+	public async Task OnValidSubmitAsync()
+	{
+		Context.Categories.Remove(Category!);
+		await Context.SaveChangesAsync();
+		Navigation.NavigateTo("categories");
+	}
+}
