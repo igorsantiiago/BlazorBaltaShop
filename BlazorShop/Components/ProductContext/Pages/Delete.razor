@@ -1,0 +1,47 @@
+﻿@page "/products/delete/{id:int}"
+@inject ApplicationDbContext Context
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+@attribute [Authorize]
+
+@if (Product is null)
+{
+	<p class="fw-bolder">O produto selecionado não existe.</p>
+}
+else
+{
+	<h3>Você tem certeza que deseja remover os seguintes dados?</h3>
+
+	<EditForm Model="@Product" OnValidSubmit="OnValidSubmitAsync">
+		<div class="mb-3">
+			<label class="form-label">ID</label>
+			<InputNumber @bind-Value="@Product.Id" class="form-control" readonly/>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Produto</label>
+			<InputText @bind-Value="@Product.Title" class="form-control" readonly/>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Preço</label>
+			<InputNumber @bind-Value="@Product.Price" class="form-control" readonly />
+		</div>
+
+		<button type="submit" class="btn btn-danger">Excluir</button>
+		<a href="/products" class="btn btn-outline-primary">Cancelar</a>
+	</EditForm>
+}
+@code {
+	[Parameter]
+	public int Id { get; set; }
+	public Product? Product { get; set; }
+
+	protected override async Task OnInitializedAsync()
+		=> Product = await Context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
+
+	public async Task OnValidSubmitAsync()
+	{
+		Context.Products.Remove(Product!);
+		await Context.SaveChangesAsync();
+		Navigation.NavigateTo("products");
+	}
+}

@@ -1,0 +1,37 @@
+﻿@page "/products/{id:int}"
+@inject ApplicationDbContext Context
+
+@if (Product is null)
+{
+	<p class="text-center fw-bold">Produto não encontrado</p>
+}
+else
+{
+	<h2>Dados do Produto</h2>
+	<EditForm Model="@Product">
+		<div class="mb-3">
+			<label class="form-label">Id</label>
+			<InputNumber @bind-Value="Product.Id" class="form-control" readonly />
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Produto</label>
+			<InputText @bind-Value="Product.Title" class="form-control" readonly />
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Preço</label>
+			<InputNumber @bind-Value="Product.Price" class="form-control" readonly />
+		</div>
+
+		<a href="/products" class="btn btn-primary">Voltar</a>
+
+	</EditForm>
+}
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+	public Product? Product { get; set; }
+
+	protected async override Task OnInitializedAsync()
+		=> Product = await Context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
+}

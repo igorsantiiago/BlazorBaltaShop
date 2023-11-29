@@ -1,5 +1,5 @@
 ﻿@page "/products"
-@inject ApplicationDbContext Context
+@inject ApplicationDbContext Contexts
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
@@ -51,5 +51,5 @@ else
 	public IEnumerable<Product> Products { get; set; } = Enumerable.Empty<Product>();
 
 	protected override async Task OnInitializedAsync()
-		=> Products = await Context.Products.AsNoTracking().Include(x => x.Category).ToListAsync();
+		=> Products = await Contexts.Products.AsNoTracking().Include(x => x.Category).ToListAsync();
 }
